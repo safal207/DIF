@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/signal.schema.json",
+  "title": "Signal",
+  "description": "Raw human expression before it becomes clarified intent.",
+  "type": "object",
+  "required": ["id", "type", "content", "createdAt"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique signal identifier."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["text", "drawing", "voice_transcript", "emotion", "screenshot", "note", "file", "dialogue", "word_set", "behavioral_pattern", "other"]
+    },
+    "content": {
+      "type": "string",
+      "description": "Raw signal content or description."
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "signal_001",
+      "type": "text",
+      "content": "I have an idea but I cannot explain it yet.",
+      "metadata": {},
+      "createdAt": "2026-05-10T12:00:00Z"
+    }
+  ]
+}
