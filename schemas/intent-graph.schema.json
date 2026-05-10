@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/intent-graph.schema.json",
+  "title": "IntentGraph",
+  "description": "A structured graph of confirmed intention, including goals, causes, constraints, conflicts, risks, and actions.",
+  "type": "object",
+  "required": ["nodes", "edges"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["goal", "constraint", "cause", "conflict", "value", "risk", "option", "action", "note", "other"]
+          },
+          "label": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "type"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["supports", "blocks", "causes", "protects", "depends_on", "conflicts_with", "leads_to", "clarifies", "other"]
+          },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "nodes": [
+        { "id": "goal_001", "type": "goal", "label": "Clarify human intention" },
+        { "id": "constraint_001", "type": "constraint", "label": "Do not claim final understanding" }
+      ],
+      "edges": [
+        { "from": "constraint_001", "to": "goal_001", "type": "protects" }
+      ]
+    }
+  ]
+}
