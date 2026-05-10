@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/action-output.schema.json",
+  "title": "ActionOutput",
+  "description": "A concrete next step generated after intent clarification.",
+  "type": "object",
+  "required": ["id", "type", "title", "description", "dependsOnIntentId"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["document", "task", "prompt", "decision", "message", "plan", "architecture", "strategy", "other"]
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "dependsOnIntentId": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "accepted", "done", "discarded"],
+      "default": "proposed"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "action_001",
+      "type": "document",
+      "title": "Write DIF README v0.1",
+      "description": "Create a clear README explaining the concept, invariant, funnel, and MVP.",
+      "dependsOnIntentId": "intent_001",
+      "status": "proposed"
+    }
+  ]
+}
