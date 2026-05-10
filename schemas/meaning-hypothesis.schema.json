@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/meaning-hypothesis.schema.json",
+  "title": "MeaningHypothesis",
+  "description": "A provisional interpretation of a raw signal.",
+  "type": "object",
+  "required": ["id", "text", "status"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "unknown"]
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "accepted", "rejected", "modified", "superseded"]
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "hypothesis_001",
+      "text": "You may be trying to turn a chaotic inner signal into a structured project direction.",
+      "confidence": "medium",
+      "evidence": ["chaos", "central idea", "need for structure"],
+      "status": "proposed"
+    }
+  ]
+}
