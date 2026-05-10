@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/correction.schema.json",
+  "title": "Correction",
+  "description": "Human feedback that modifies, accepts, or rejects an interpretation.",
+  "type": "object",
+  "required": ["id", "feedback", "effect", "createdAt"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "targetHypothesisId": {
+      "type": "string"
+    },
+    "feedback": {
+      "type": "string"
+    },
+    "effect": {
+      "type": "string",
+      "enum": ["accept", "reject", "modify", "deepen", "remove", "reframe", "unknown"]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "correction_001",
+      "targetHypothesisId": "hypothesis_001",
+      "feedback": "close, but not only for drawings",
+      "effect": "modify",
+      "createdAt": "2026-05-10T12:05:00Z"
+    }
+  ]
+}
