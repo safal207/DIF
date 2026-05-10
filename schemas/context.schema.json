@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/context.schema.json",
+  "title": "Context",
+  "description": "Situational frame around a raw signal.",
+  "type": "object",
+  "required": ["domain"],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "enum": ["project", "money", "relationship", "creativity", "fear", "choice", "action", "meaning", "work", "family", "future", "other"]
+    },
+    "userGoal": {
+      "type": "string"
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "timeframe": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "domain": "project",
+      "userGoal": "turn unclear idea into a project concept",
+      "constraints": ["keep it separate from other projects"],
+      "timeframe": "early concept stage"
+    }
+  ]
+}
