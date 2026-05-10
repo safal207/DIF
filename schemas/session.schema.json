@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/session.schema.json",
+  "title": "DIFSession",
+  "description": "A complete versioned journey from raw signal to confirmed intent and action.",
+  "type": "object",
+  "required": ["id", "signals", "hypotheses", "corrections", "confirmedIntents", "intentGraphs", "actions", "status", "createdAt", "updatedAt"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "signals": {
+      "type": "array",
+      "items": { "$ref": "signal.schema.json" }
+    },
+    "context": {
+      "$ref": "context.schema.json"
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": { "$ref": "meaning-hypothesis.schema.json" }
+    },
+    "corrections": {
+      "type": "array",
+      "items": { "$ref": "correction.schema.json" }
+    },
+    "confirmedIntents": {
+      "type": "array",
+      "items": { "$ref": "confirmed-intent.schema.json" }
+    },
+    "intentGraphs": {
+      "type": "array",
+      "items": { "$ref": "intent-graph.schema.json" }
+    },
+    "actions": {
+      "type": "array",
+      "items": { "$ref": "action-output.schema.json" }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["started", "context_captured", "hypotheses_proposed", "correction_needed", "intent_confirmed", "action_proposed", "closed"]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "session_001",
+      "signals": [
+        {
+          "id": "signal_001",
+          "type": "text",
+          "content": "I have an idea but I cannot explain it yet.",
+          "metadata": {},
+          "createdAt": "2026-05-10T12:00:00Z"
+        }
+      ],
+      "context": {
+        "domain": "project",
+        "userGoal": "turn unclear idea into a project concept",
+        "constraints": ["keep it separate from other projects"],
+        "timeframe": "early concept stage"
+      },
+      "hypotheses": [],
+      "corrections": [],
+      "confirmedIntents": [],
+      "intentGraphs": [],
+      "actions": [],
+      "status": "context_captured",
+      "createdAt": "2026-05-10T12:00:00Z",
+      "updatedAt": "2026-05-10T12:03:00Z"
+    }
+  ]
+}
