@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/confirmed-intent.schema.json",
+  "title": "ConfirmedIntent",
+  "description": "A human-confirmed version of intention. It is versioned and can change later.",
+  "type": "object",
+  "required": ["id", "version", "statement", "confirmedByHuman", "createdAt"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "statement": {
+      "type": "string"
+    },
+    "confirmedByHuman": {
+      "type": "boolean"
+    },
+    "sourceSignalIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "sourceCorrectionIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "intent_001",
+      "version": 1,
+      "statement": "Create a standalone system that helps people transform raw expression into clarified intention before generating answers or actions.",
+      "confirmedByHuman": true,
+      "sourceSignalIds": ["signal_001"],
+      "sourceCorrectionIds": ["correction_001"],
+      "createdAt": "2026-05-10T12:10:00Z"
+    }
+  ]
+}
