@@ -103,6 +103,22 @@ The first MVP should help a person:
 - `ActionOutput` — concrete next step after clarification.
 - `Session` — versioned clarification journey.
 
+## Market Positioning
+
+DIF's first practical wedge is:
+
+```text
+DIF helps teams clarify human intent before AI systems act.
+```
+
+The strongest early product direction is **DIF Task Clarifier**:
+
+```text
+vague request → clarified intent → structured task → AI / team action
+```
+
+See [`docs/market-positioning.md`](docs/market-positioning.md).
+
 ## Roadmap
 
 See [`docs/roadmap.md`](docs/roadmap.md).
