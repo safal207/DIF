@@ -103,6 +103,29 @@ The first MVP should help a person:
 - `ActionOutput` — concrete next step after clarification.
 - `Session` — versioned clarification journey.
 
+## Q-State Layer
+
+DIF can also model intention as an uncertain evolving state.
+
+The Q-State Layer introduces:
+
+- `Intent State Matrix` — current map of possible meanings;
+- `Partial Trace Views` — focused lenses on business, technical, emotional, or action context;
+- `Intent Channels` — transitions caused by clarification, correction, and confirmation;
+- `Decoherence Radar` — detection of meaning drift before AI or teams act.
+
+This layer is quantum-inspired, not quantum computing. It exists to help DIF represent uncertainty, correction, and drift without claiming final authority over human intention.
+
+See [`docs/q-state-layer.md`](docs/q-state-layer.md) and [`docs/decoherence-radar.md`](docs/decoherence-radar.md).
+
+## Examples
+
+DIF examples show the before/after transformation from messy input to clarified intent and action-ready output.
+
+- [`docs/examples/startup-idea.md`](docs/examples/startup-idea.md) — startup idea → product direction.
+- [`docs/examples/vague-ticket.md`](docs/examples/vague-ticket.md) — vague QA/support complaint → testable engineering ticket.
+- [`docs/examples/customer-complaint.md`](docs/examples/customer-complaint.md) — emotional customer complaint → support triage action.
+
 ## Market Positioning
 
 DIF's first practical wedge is:
