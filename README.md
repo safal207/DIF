@@ -20,6 +20,37 @@ DIF follows a deeper path:
 raw signal → context → meaning hypothesis → human correction → confirmed intent → decision → action
 ```
 
+## 30-Second Example
+
+Input:
+
+```text
+The page is slow and users are unhappy.
+```
+
+DIF output:
+
+```text
+Visible signals:
+- A page is perceived as slow.
+- The affected page is not specified.
+- The meaning of slow is not quantified.
+
+Clarifying question:
+Which page, user segment, browser/device, and timestamp should we use for the first reproduction attempt?
+
+Confirmed intent:
+Investigate delayed updates and UI freezing during the specific affected flow.
+
+Action output:
+Create a testable engineering ticket with reproduction steps, expected/actual behavior, missing context, and acceptance criteria.
+
+Decoherence check:
+Do not expand this into a full redesign unless the human confirms that broader scope.
+```
+
+See the full example: [`docs/examples/vague-ticket.md`](docs/examples/vague-ticket.md).
+
 ## Core Principle
 
 DIF must never claim final access to human intention.
