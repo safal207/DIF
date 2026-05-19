@@ -179,16 +179,25 @@ See [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Community Tasks
 
-The first contributor-friendly tasks are tracked in GitHub Issues and documented in the roadmap.
+Contributor-friendly tasks are organized by difficulty in [`docs/community-tasks.md`](docs/community-tasks.md).
+
+The task ladder includes:
+
+- Level 1 — Newcomer tasks;
+- Level 2 — Beginner docs and examples;
+- Level 3 — Intermediate schemas and TypeScript samples;
+- Level 4 — Advanced scoring and CLI prototypes;
+- Level 5 — Expert evaluation and safety design;
+- Level 6 — Professional demos and integrations.
 
 Good first directions:
 
 - improve examples;
-- define entities;
-- create schemas;
-- design the clarification flow;
-- build a lightweight TypeScript prototype;
-- define safety and evaluation rules.
+- create a glossary;
+- add AI prompt clarification examples;
+- define Q-State JSON schemas;
+- implement basic Decoherence Radar scoring;
+- build a GitHub Issue generator.
 
 ## Status
 
