@@ -134,6 +134,8 @@ The first MVP should help a person:
 - `ActionOutput` — concrete next step after clarification.
 - `Session` — versioned clarification journey.
 
+For short definitions, see [`docs/glossary.md`](docs/glossary.md).
+
 ## Q-State Layer
 
 DIF can also model intention as an uncertain evolving state.
