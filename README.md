@@ -159,6 +159,7 @@ DIF examples show the before/after transformation from messy input to clarified 
 - [`docs/examples/vague-ticket.md`](docs/examples/vague-ticket.md) — vague QA/support complaint → testable engineering ticket.
 - [`docs/examples/customer-complaint.md`](docs/examples/customer-complaint.md) — emotional customer complaint → support triage action.
 - [`docs/examples/ai-prompt-clarification.md`](docs/examples/ai-prompt-clarification.md) — vague AI prompt → clarified generation brief.
+- [`docs/examples/product-discovery.md`](docs/examples/product-discovery.md) — vague feature request → confirmed product discovery direction.
 
 ## Market Positioning
 
