@@ -151,6 +151,22 @@ This layer is quantum-inspired, not quantum computing. It exists to help DIF rep
 
 See [`docs/q-state-layer.md`](docs/q-state-layer.md) and [`docs/decoherence-radar.md`](docs/decoherence-radar.md).
 
+## Decision Equilibrium Stack
+
+DIF can be part of a broader human-AI decision stack:
+
+```text
+DIF -> DI -> DRP
+```
+
+Where:
+
+- DIF clarifies what is meant;
+- DI clarifies what can and cannot be done;
+- DRP records what was decided and why.
+
+See [`docs/decision-equilibrium-stack.md`](docs/decision-equilibrium-stack.md).
+
 ## Examples
 
 DIF examples show the before/after transformation from messy input to clarified intent and action-ready output.
