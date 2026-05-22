@@ -2,12 +2,12 @@
 
 **Scope:** relation between DIF, DI, and DRP
 
-This document explains how DeepIntent Funnel (DIF) relates to two neighboring layers:
+This document explains how DeepIntent Funnel (DIF) relates to two neighboring repositories:
 
-- **DI** — Decision / Domain Intelligence for capabilities and limitations;
-- **DRP** — Decision Record Protocol for committed decisions and decision memory.
+- **DI** — Decision / Domain Intelligence for capabilities and limitations: [`safal207/DI`](https://github.com/safal207/DI);
+- **DRP** — Decision Record Protocol for committed decisions and decision memory: [`safal207/DRP`](https://github.com/safal207/DRP).
 
-The goal is to make the project map explicit so each layer keeps a clear responsibility.
+The goal is to make the project map explicit so each repository keeps a clear responsibility.
 
 ---
 
@@ -298,9 +298,9 @@ Too much trust, privacy, and escalation risk.
 
 | Layer | Repository | Main question | Output |
 |---|---|---|---|
-| Intent | DIF | What is meant? | Confirmed intent |
-| Limits | DI | What is possible or bounded? | Feasibility / capability map |
-| Memory | DRP | What was decided and why? | Decision record |
+| Intent | [`DIF`](https://github.com/safal207/DIF) | What is meant? | Confirmed intent |
+| Limits | [`DI`](https://github.com/safal207/DI) | What is possible or bounded? | Feasibility / capability map |
+| Memory | [`DRP`](https://github.com/safal207/DRP) | What was decided and why? | Decision record |
 
 ---
 
