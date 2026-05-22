@@ -1,14 +1,13 @@
 # Human-AI Decision Equilibrium Stack
 
-**Status:** conceptual bridge  
-**Scope:** relation between DIF, future DI, and DRP
+**Scope:** relation between DIF, DI, and DRP
 
 This document explains how DeepIntent Funnel (DIF) relates to two neighboring layers:
 
 - **DI** — Decision / Domain Intelligence for capabilities and limitations;
 - **DRP** — Decision Record Protocol for committed decisions and decision memory.
 
-The goal is to make the project map explicit before creating more repositories or adding more implementation layers.
+The goal is to make the project map explicit so each layer keeps a clear responsibility.
 
 ---
 
@@ -76,15 +75,13 @@ Do not act before intention is clarified.
 
 ## 2. DI — Capability and Limitation Layer
 
-DI is the future layer.
-
-DI should answer:
+DI answers:
 
 ```text
 What is possible, impossible, risky, or bounded under current constraints?
 ```
 
-DI should not replace DIF or DRP.
+DI does not replace DIF or DRP.
 
 DI sits between clarified intent and committed decision.
 
@@ -307,14 +304,20 @@ Too much trust, privacy, and escalation risk.
 
 ---
 
-## What DI Should Become
+## DI Repository Boundary
 
-DI should be a narrow and clean repository.
+DI is a narrow capability and limitation layer.
 
-Suggested thesis:
+Thesis:
 
 ```text
 DI maps what can and cannot be done before decisions become commitments.
+```
+
+Repository focus:
+
+```text
+capabilities, limits, feasibility, risk, and commitment boundaries
 ```
 
 Suggested structure:
@@ -337,13 +340,13 @@ DI/
     qa-automation.md
 ```
 
-DI should not become a broad productivity system.
+DI is not a broad productivity system.
 
-DI should stay focused on:
+DI is not a task manager.
 
-```text
-capabilities, limits, feasibility, risk, and commitment boundaries
-```
+DI is not an intent clarification layer.
+
+DI is the layer that makes boundaries explicit before a decision is committed.
 
 ---
 
@@ -383,7 +386,7 @@ If it answers none of these, it may be a separate project or should wait.
 
 ## Summary
 
-DIF, DI, and DRP can form a simple decision stack:
+DIF, DI, and DRP form a simple decision stack:
 
 ```text
 DIF — do not act before intent is clarified.
