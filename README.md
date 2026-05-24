@@ -181,6 +181,16 @@ See [`docs/market-positioning.md`](docs/market-positioning.md).
 
 See [`docs/roadmap.md`](docs/roadmap.md).
 
+## Contributing
+
+DIF welcomes contributors who care about clearer human-AI communication, better task definition, and safer action before execution.
+
+Start here:
+
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution guide and PR expectations.
+- [`docs/contributor-invitation.md`](docs/contributor-invitation.md) — short invitation to share with potential contributors.
+- [`docs/community-tasks.md`](docs/community-tasks.md) — task ladder by difficulty.
+
 ## Community Tasks
 
 Contributor-friendly tasks are organized by difficulty in [`docs/community-tasks.md`](docs/community-tasks.md).
