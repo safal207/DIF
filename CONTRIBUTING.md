@@ -12,7 +12,21 @@ raw signal -> meaning hypotheses -> human correction -> confirmed intent -> acti
 
 DIF needs contributors who can help make this path clearer through examples, documentation, schemas, types, prototypes, and evaluation cases.
 
-If you are here for the first time, start with [First Steps](#first-steps).
+## TL;DR
+
+New here? Start small.
+
+```text
+Read README -> pick a small issue -> comment "I'd like to work on this" -> open a focused PR
+```
+
+Fast links:
+
+- [How to choose a task](#how-to-choose-a-task)
+- [How to work on a task](#how-to-work-on-a-task)
+- [Pull request requirements](#pull-request-requirements)
+- [Review checklist](#review-checklist)
+- [Start right now](#start-right-now)
 
 ---
 
@@ -38,6 +52,7 @@ Suggested GitHub issue searches:
 - `label:beginner`
 - `label:examples`
 - `label:documentation`
+- `label:"help wanted"`
 
 ---
 
@@ -56,6 +71,21 @@ It helps transform messy human input into:
 
 DIF should help people and teams avoid acting on vague prompts, unclear tickets, emotional complaints, and incomplete product requests.
 
+Good DIF contributions:
+
+- add an example that clarifies a vague request;
+- improve a clarification flow;
+- make missing context more visible;
+- reduce false certainty in docs or examples;
+- add a safer way to handle human correction.
+
+Not DIF contributions:
+
+- general project management features;
+- broad task tracking unrelated to intent clarification;
+- decision-history logic that belongs in DRP;
+- capability or limitation modeling that belongs in DI.
+
 Main invariant:
 
 ```text
@@ -72,13 +102,11 @@ DIF must not claim that it knows the user's true intent.
 
 Please keep DIF focused.
 
-Neighboring repositories have different roles:
-
-```text
-DIF -> intent clarification
-DI  -> capabilities and limitations
-DRP -> decision records and reasons
-```
+| Repository | Responsibility | Example contribution |
+|---|---|---|
+| DIF | examples and tools for intent clarification | clarify a vague ticket into confirmed intent |
+| DI | capabilities and limitations | model what a system can or cannot do |
+| DRP | decision records and reasons | record what was decided and why |
 
 This means:
 
@@ -176,7 +204,17 @@ Good tasks:
 
 ## How to Choose a Task
 
-Start from the [`docs/community-tasks.md`](docs/community-tasks.md) task ladder.
+Start from one of two places:
+
+1. GitHub issues labeled `good first issue`, `help wanted`, `documentation`, `examples`, or `beginner`.
+2. The [`docs/community-tasks.md`](docs/community-tasks.md) task ladder.
+
+Choose a task that is:
+
+- small enough for 1–2 evenings;
+- clearly scoped;
+- aligned with DIF's focus on intent clarification;
+- easy to review as one focused PR.
 
 General guidance:
 
@@ -194,6 +232,14 @@ Can this make the path from raw signal to clarified intent clearer?
 
 If yes, it is probably useful for DIF.
 
+Before starting, comment on the issue:
+
+```text
+I'd like to work on this.
+```
+
+This helps avoid duplicate work.
+
 Recommended first contributions:
 
 - add one example;
@@ -209,10 +255,10 @@ Recommended first contributions:
 Recommended workflow:
 
 1. Find an issue or task.
-2. Comment on the issue, for example:
+2. Comment on the issue:
 
 ```text
-I would like to work on this.
+I'd like to work on this.
 ```
 
 3. Ask clarifying questions if the task is ambiguous.
@@ -226,8 +272,15 @@ feat/<short-name>
 fix/<short-name>
 ```
 
-6. Open a draft PR if the work is larger than one small edit.
-7. Keep the PR focused.
+6. Link the issue in the PR body.
+7. Open a draft PR if the work is larger than one small edit.
+8. Ask for review when the PR is ready.
+
+Minimal workflow:
+
+```text
+Fork -> create branch -> make focused change -> link issue -> open PR -> ask for review
+```
 
 Avoid mixing unrelated changes in one PR.
 
@@ -250,11 +303,12 @@ fix: ...
 
 A good PR should include:
 
-- what changed;
-- why it matters;
-- which issue it relates to, if any;
+- linked issue, if one exists;
+- clear summary of what changed;
+- reason why the change matters;
 - how to review or verify the change;
-- any risks or limitations.
+- updated docs, examples, or tests when applicable;
+- risks or limitations, if relevant.
 
 A good PR should also:
 
@@ -263,6 +317,8 @@ A good PR should also:
 - include examples when adding a new concept;
 - avoid mixing DIF with DI or DRP logic;
 - stay small enough to review.
+
+The [Review Checklist](#review-checklist) shows what maintainers look at when reviewing your PR.
 
 ---
 
@@ -281,6 +337,12 @@ Action Output
 Decoherence / Drift Check
 ```
 
+Canonical examples:
+
+- [`docs/examples/vague-ticket.md`](docs/examples/vague-ticket.md)
+- [`docs/examples/ai-prompt-clarification.md`](docs/examples/ai-prompt-clarification.md)
+- [`docs/examples/product-discovery.md`](docs/examples/product-discovery.md)
+
 Example raw signals:
 
 ```text
@@ -290,9 +352,43 @@ Users want more control over the dashboard.
 Everything is broken. This is urgent.
 ```
 
-The example should not pretend that the first interpretation is final.
+Do:
 
-It should show how a human can correct the system.
+- focus on clarifying intent under ambiguity;
+- show at least one human correction;
+- keep missing context explicit;
+- include one concrete next action;
+- include a drift or decoherence check.
+
+Do not:
+
+- treat the first interpretation as final;
+- turn DIF into a general decision log;
+- move capability or limitation modeling into DIF;
+- invent requirements without marking them as assumptions;
+- claim the system knows the user's true intent.
+
+Mini-template:
+
+```md
+# Example: <Scenario Name>
+
+## Raw Signal
+
+## Visible Signals
+
+## Missing Context
+
+## Meaning Hypotheses
+
+## Human Correction
+
+## Confirmed Intent
+
+## Action Output
+
+## Decoherence / Drift Check
+```
 
 ---
 
@@ -324,6 +420,8 @@ If you add behavior-changing code, include a small example or test where possibl
 
 Use GitHub issues and PR comments for project discussion.
 
+If you are unsure whether your idea fits DIF, open a short proposal issue before writing code.
+
 Good communication means:
 
 - explain the motivation for changes;
@@ -353,9 +451,16 @@ Before opening a PR, check:
 
 To make your first contribution:
 
-1. Read [`README.md`](README.md) and this file.
-2. Pick a Level 1 or Level 2 task from [`docs/community-tasks.md`](docs/community-tasks.md).
-3. Comment on the issue you want to work on.
-4. Open a small PR, even if it only improves docs.
+1. Star the repository if the project is useful to you.
+2. Read [`README.md`](README.md) and this file.
+3. Pick a Level 1 or Level 2 task from [`docs/community-tasks.md`](docs/community-tasks.md), or choose one small docs improvement.
+4. Comment on the issue you want to work on.
+5. Open a small PR, even if it only improves docs.
+
+Micro-task without deep context:
+
+```text
+Read the 30-second example in README and suggest one sentence that would make it clearer for a first-time visitor.
+```
 
 A clear example, a better definition, or a sharper safety rule can improve the project significantly.
