@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DIF Task Clarifier Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f2ea;
+      --surface: #fffdf8;
+      --ink: #1f2421;
+      --muted: #66706a;
+      --line: #d9ddd8;
+      --accent: #315c48;
+      --accent-soft: #e4eee8;
+      --warning: #7a4b12;
+      --warning-soft: #fff2d7;
+      --shadow: 0 18px 50px rgba(31, 36, 33, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(49, 92, 72, 0.12), transparent 34rem),
+        var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 72px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 { line-height: 1.15; }
+    h1 { margin: 0; font-size: clamp(2.2rem, 6vw, 4.5rem); letter-spacing: -0.05em; }
+    h2 { margin: 0 0 14px; font-size: 1.25rem; }
+    h3 { margin: 0 0 10px; font-size: 1rem; }
+
+    .lede {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+      color: var(--accent);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .flow span:not(:last-child)::after {
+      content: "→";
+      margin-left: 8px;
+      color: var(--muted);
+    }
+
+    .panel {
+      background: rgba(255, 253, 248, 0.94);
+      border: 1px solid rgba(49, 92, 72, 0.14);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: clamp(20px, 4vw, 34px);
+    }
+
+    .input-panel { margin-bottom: 20px; }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 750;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 14px 16px;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    textarea { min-height: 132px; resize: vertical; }
+
+    textarea:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(49, 92, 72, 0.12);
+    }
+
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 18px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform 120ms ease, opacity 120ms ease, background 120ms ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { cursor: not-allowed; opacity: 0.45; transform: none; }
+
+    .preset {
+      padding: 8px 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .primary {
+      padding: 12px 18px;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .secondary {
+      padding: 11px 16px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      background: #fff;
+    }
+
+    .card.full { grid-column: 1 / -1; }
+
+    ul, ol { margin: 0; padding-left: 1.3rem; }
+    li + li { margin-top: 6px; }
+
+    .hypothesis {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .hypothesis + .hypothesis { margin-top: 9px; }
+    .hypothesis input { margin-top: 4px; }
+    .hypothesis label { margin: 0; font-weight: 600; cursor: pointer; }
+
+    .correction-wrap { margin-top: 16px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+    .notice {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: var(--warning-soft);
+      color: var(--warning);
+      font-size: 0.92rem;
+    }
+
+    .final-output {
+      margin-top: 20px;
+      border-left: 5px solid var(--accent);
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 14px;
+      background: #18201c;
+      color: #eef5f0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font: 0.9rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .muted { color: var(--muted); }
+    .hidden { display: none; }
+
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 760px) {
+      main { padding-top: 28px; }
+      .grid { grid-template-columns: 1fr; }
+      .card.full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <p class="eyebrow">DeepIntent Funnel · v0.1 demo</p>
+      <h1>Clarify before acting.</h1>
+      <p class="lede">Turn a vague task, complaint, or product request into visible signals, missing context, human-confirmed intent, and an action-ready ticket.</p>
+      <div class="flow" aria-label="DIF flow">
+        <span>Raw signal</span>
+        <span>Hypotheses</span>
+        <span>Human correction</span>
+        <span>Confirmed intent</span>
+        <span>Action output</span>
+      </div>
+    </header>
+
+    <section class="panel input-panel" aria-labelledby="input-heading">
+      <h2 id="input-heading">1. Enter a raw signal</h2>
+      <label for="rawSignal">What did the person say?</label>
+      <textarea id="rawSignal">The page is slow and users are unhappy.</textarea>
+
+      <div class="presets" aria-label="Example inputs">
+        <button class="preset" type="button" data-example="The page is slow and users are unhappy.">Performance complaint</button>
+        <button class="preset" type="button" data-example="The checkout button sometimes does not work.">Vague bug report</button>
+        <button class="preset" type="button" data-example="Users want more control over the dashboard.">Product request</button>
+      </div>
+
+      <button class="primary" id="analyzeButton" type="button">Clarify this signal</button>
+      <p class="notice">This demo is deterministic and runs entirely in your browser. It illustrates the DIF workflow; it does not claim to know the person's true intent.</p>
+    </section>
+
+    <section class="panel hidden" id="analysisPanel" aria-labelledby="analysis-heading">
+      <h2 id="analysis-heading">2. Review the interpretation</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Visible signals</h3>
+          <ul id="visibleSignals"></ul>
+        </article>
+
+        <article class="card">
+          <h3>Missing context</h3>
+          <ul id="missingContext"></ul>
+        </article>
+
+        <article class="card full">
+          <h3>Clarifying questions</h3>
+          <ol id="clarifyingQuestions"></ol>
+        </article>
+
+        <article class="card full">
+          <h3>Meaning hypotheses</h3>
+          <p class="muted">Choose the closest hypothesis, then correct it in your own words if needed.</p>
+          <div id="hypotheses"></div>
+
+          <div class="correction-wrap">
+            <label for="humanCorrection">Human correction or extra context</label>
+            <input id="humanCorrection" type="text" placeholder="Example: Only the analytics page is affected, on mobile Safari.">
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="confirmButton" type="button" disabled>Confirm intent</button>
+            <button class="secondary" id="resetButton" type="button">Start over</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel final-output hidden" id="finalPanel" aria-labelledby="final-heading">
+      <h2 id="final-heading">3. Action-ready output</h2>
+
+      <article class="card">
+        <h3>Confirmed intent</h3>
+        <p id="confirmedIntent"></p>
+      </article>
+
+      <article class="card" style="margin-top: 14px;">
+        <h3>GitHub-ready ticket draft</h3>
+        <pre id="ticketOutput"></pre>
+      </article>
+
+      <div class="notice" id="driftWarning"></div>
+    </section>
+
+    <footer>
+      Main invariant: <strong>No system has final authority over human intention.</strong>
+    </footer>
+  </main>
+
+  <script>
+    const rawSignal = document.querySelector('#rawSignal');
+    const analyzeButton = document.querySelector('#analyzeButton');
+    const analysisPanel = document.querySelector('#analysisPanel');
+    const finalPanel = document.querySelector('#finalPanel');
+    const confirmButton = document.querySelector('#confirmButton');
+    const resetButton = document.querySelector('#resetButton');
+    const correctionInput = document.querySelector('#humanCorrection');
+
+    const state = {
+      raw: '',
+      missingContext: [],
+      hypotheses: []
+    };
+
+    const domainRules = [
+      {
+        name: 'performance',
+        words: ['slow', 'delay', 'lag', 'freeze', 'freezes', 'loading'],
+        signal: 'The report may concern performance or responsiveness.',
+        questions: [
+          'Which page, screen, or user flow is affected?',
+          'How is “slow” measured: load time, update delay, freezing, or another symptom?',
+          'When did the behavior start, and how often does it occur?'
+        ],
+        hypotheses: [
+          'Investigate a reproducible performance problem in a specific user flow.',
+          'Clarify whether the concern is perceived latency, temporary freezing, or delayed data updates.'
+        ]
+      },
+      {
+        name: 'reliability',
+        words: ['broken', 'error', 'fail', 'fails', 'not work', 'does not work', 'stopped'],
+        signal: 'The report may concern incorrect or unavailable behavior.',
+        questions: [
+          'What exact action produces the problem?',
+          'What was expected, and what happened instead?',
+          'Is the behavior reproducible or intermittent?'
+        ],
+        hypotheses: [
+          'Reproduce and scope a functional defect without assuming its root cause.',
+          'Clarify whether the issue blocks the whole flow or only one step.'
+        ]
+      },
+      {
+        name: 'product',
+        words: ['want', 'feature', 'control', 'dashboard', 'should add'],
+        signal: 'The report may contain a product need rather than a confirmed solution.',
+        questions: [
+          'Which users experience this need?',
+          'What job are they trying to complete?',
+          'What current limitation prevents that outcome?'
+        ],
+        hypotheses: [
+          'Clarify the user outcome before choosing a product solution.',
+          'Determine whether the request is for visibility, configuration, permissions, or workflow control.'
+        ]
+      }
+    ];
+
+    function unique(items) {
+      return [...new Set(items)];
+    }
+
+    function renderList(selector, items) {
+      const target = document.querySelector(selector);
+      target.replaceChildren();
+      items.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        target.appendChild(li);
+      });
+    }
+
+    function analyze(text) {
+      const normalized = text.toLowerCase();
+      const matchedRules = domainRules.filter((rule) =>
+        rule.words.some((word) => normalized.includes(word))
+      );
+
+      const activeRules = matchedRules.length ? matchedRules : [domainRules[1]];
+      const visibleSignals = [
+        `A human reported: “${text}”`,
+        ...activeRules.map((rule) => rule.signal)
+      ];
+
+      if (/user|customer|people/.test(normalized)) {
+        visibleSignals.push('An affected user group is mentioned, but it is not identified precisely.');
+      }
+
+      const missingContext = unique([
+        'Affected page, screen, feature, or workflow',
+        'Environment: device, browser, app version, or account type',
+        'Expected behavior versus observed behavior',
+        'Time, frequency, and reproducibility',
+        'Evidence such as timestamps, screenshots, logs, or recordings',
+        /user|customer|people/.test(normalized) ? 'Affected user segment and impact' : null
+      ].filter(Boolean));
+
+      const questions = unique([
+        ...activeRules.flatMap((rule) => rule.questions),
+        'Which environment and user segment should be used for the first reproduction attempt?',
+        'What evidence is already available?'
+      ]).slice(0, 5);
+
+      const hypotheses = unique([
+        ...activeRules.flatMap((rule) => rule.hypotheses),
+        'First clarify scope and impact, then decide whether the next step is support triage, investigation, or product discovery.'
+      ]).slice(0, 4);
+
+      return { visibleSignals, missingContext, questions, hypotheses };
+    }
+
+    function renderHypotheses(items) {
+      const target = document.querySelector('#hypotheses');
+      target.replaceChildren();
+
+      items.forEach((item, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'hypothesis';
+
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'hypothesis';
+        input.id = `hypothesis-${index}`;
+        input.value = item;
+
+        const label = document.createElement('label');
+        label.htmlFor = input.id;
+        label.textContent = item;
+
+        input.addEventListener('change', () => {
+          confirmButton.disabled = false;
+        });
+
+        wrapper.append(input, label);
+        target.appendChild(wrapper);
+      });
+    }
+
+    function handleAnalyze() {
+      const text = rawSignal.value.trim();
+      if (!text) {
+        rawSignal.focus();
+        return;
+      }
+
+      const result = analyze(text);
+      state.raw = text;
+      state.missingContext = result.missingContext;
+      state.hypotheses = result.hypotheses;
+
+      renderList('#visibleSignals', result.visibleSignals);
+      renderList('#missingContext', result.missingContext);
+      renderList('#clarifyingQuestions', result.questions);
+      renderHypotheses(result.hypotheses);
+
+      correctionInput.value = '';
+      confirmButton.disabled = true;
+      finalPanel.classList.add('hidden');
+      analysisPanel.classList.remove('hidden');
+      analysisPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function handleConfirm() {
+      const selected = document.querySelector('input[name="hypothesis"]:checked');
+      if (!selected) return;
+
+      const correction = correctionInput.value.trim();
+      const confirmed = correction
+        ? `${selected.value} Human correction: ${correction}`
+        : selected.value;
+
+      document.querySelector('#confirmedIntent').textContent = confirmed;
+
+      const missing = state.missingContext.map((item) => `- ${item}`).join('\n');
+      const ticket = [
+        '## Summary',
+        '',
+        confirmed,
+        '',
+        '## Original signal',
+        '',
+        state.raw,
+        '',
+        '## Missing information',
+        '',
+        missing,
+        '',
+        '## Acceptance criteria',
+        '',
+        '- [ ] Confirm the affected flow and user segment.',
+        '- [ ] Record expected versus actual behavior.',
+        '- [ ] Reproduce the behavior in a specified environment.',
+        '- [ ] Attach available evidence or record that evidence is missing.',
+        '- [ ] Confirm scope before expanding into redesign or unrelated work.',
+        '',
+        '## Assumptions',
+        '',
+        '- No root cause is assumed.',
+        '- The selected hypothesis was reviewed by a human.',
+        '',
+        '## Next action',
+        '',
+        'Collect the missing context and perform the first scoped reproduction or discovery step.'
+      ].join('\n');
+
+      document.querySelector('#ticketOutput').textContent = ticket;
+      document.querySelector('#driftWarning').textContent =
+        'Decoherence / drift check: do not expand this into a full redesign, diagnosis, or roadmap commitment unless the human confirms that broader scope.';
+
+      finalPanel.classList.remove('hidden');
+      finalPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.querySelectorAll('[data-example]').forEach((button) => {
+      button.addEventListener('click', () => {
+        rawSignal.value = button.dataset.example;
+        rawSignal.focus();
+      });
+    });
+
+    analyzeButton.addEventListener('click', handleAnalyze);
+    confirmButton.addEventListener('click', handleConfirm);
+    resetButton.addEventListener('click', () => {
+      analysisPanel.classList.add('hidden');
+      finalPanel.classList.add('hidden');
+      correctionInput.value = '';
+      rawSignal.focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
