@@ -51,6 +51,23 @@ Do not expand this into a full redesign unless the human confirms that broader s
 
 See the full example: [`docs/examples/vague-ticket.md`](docs/examples/vague-ticket.md).
 
+## Try the Demo
+
+The dependency-free browser demo makes the DIF flow interactive:
+
+```text
+raw signal
+→ visible signals and missing context
+→ meaning hypotheses
+→ human correction
+→ confirmed intent
+→ GitHub-ready ticket
+```
+
+Open [`demo/index.html`](demo/index.html) in a modern browser. No installation or external API is required.
+
+See [`demo/README.md`](demo/README.md) for usage notes and prototype boundaries.
+
 ## Core Principle
 
 DIF must never claim final access to human intention.
@@ -215,9 +232,9 @@ Good first directions:
 
 ## Status
 
-DIF is in early concept and architecture stage.
+DIF is in early concept and prototype stage.
 
-The current goal is to define the method, core entities, MVP flow, and examples before building heavy infrastructure.
+The current goal is to validate the method, core entities, MVP flow, examples, and lightweight demo before building heavy infrastructure.
 
 ## Slogans
 
