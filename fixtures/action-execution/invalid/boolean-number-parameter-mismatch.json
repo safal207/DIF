@@ -1,0 +1,44 @@
+{
+  "authorization": {
+    "schema_version": "0.1",
+    "response_id": "hr-type-safe",
+    "question_id": "q-type-safe",
+    "response_state": "DELEGATED_TO_AGENT",
+    "selected_option": null,
+    "decision_source": "HUMAN",
+    "human_interaction_observed": true,
+    "human_confirmed": true,
+    "agent_authority": "CHOOSE",
+    "observed_at": "2026-07-15T20:00:00Z"
+  },
+  "selection": {
+    "schema_version": "0.1",
+    "selection_id": "as-type-safe",
+    "question_id": "q-type-safe",
+    "selected_option": "toggle-feature",
+    "decision_source": "AGENT",
+    "authorization_response_id": "hr-type-safe",
+    "selected_at": "2026-07-15T20:00:01Z",
+    "action_contract": {
+      "action_type": "set_feature_flag",
+      "action_target": "feature-123",
+      "parameters": {"enabled": true}
+    }
+  },
+  "execution": {
+    "schema_version": "0.1",
+    "execution_id": "ex-type-safe",
+    "question_id": "q-type-safe",
+    "selection_id": "as-type-safe",
+    "selected_option": "toggle-feature",
+    "action_type": "set_feature_flag",
+    "action_target": "feature-123",
+    "action_parameters": {"enabled": 1},
+    "initiated_by": "AGENT",
+    "executed_by": "TOOL",
+    "execution_status": "SUCCEEDED",
+    "started_at": "2026-07-15T20:00:02Z",
+    "completed_at": "2026-07-15T20:00:03Z",
+    "error": null
+  }
+}
