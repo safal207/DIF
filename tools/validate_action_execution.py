@@ -67,6 +67,33 @@ def _non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
 
+def json_values_exactly_equal(left: Any, right: Any) -> bool:
+    """Compare JSON values canonically without Python's bool/number coercion.
+
+    Python considers ``True == 1`` and ``1 == 1.0``. Canonical JSON encoding
+    preserves those distinctions while ignoring object key order.
+    """
+
+    try:
+        left_json = json.dumps(
+            left,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+        right_json = json.dumps(
+            right,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+    except (TypeError, ValueError):
+        return False
+    return left_json == right_json
+
+
 def validate_execution_receipt(receipt: Any) -> list[str]:
     """Validate the standalone Action Execution Receipt."""
 
@@ -102,7 +129,6 @@ def validate_execution_receipt(receipt: Any) -> list[str]:
 
     if not isinstance(receipt["action_parameters"], dict):
         errors.append("execution action_parameters must be an object")
-
     if receipt["initiated_by"] != "AGENT":
         errors.append("execution initiated_by must be AGENT")
     if receipt["executed_by"] not in EXECUTORS:
@@ -131,12 +157,10 @@ def validate_execution_receipt(receipt: Any) -> list[str]:
         value = receipt.get(field)
         if value is not None and not _non_empty_string(value):
             errors.append(f"execution {field} must be null or a non-empty string")
-
     for field in ("result", "metadata"):
         value = receipt.get(field)
         if value is not None and not isinstance(value, dict):
             errors.append(f"execution {field} must be an object when provided")
-
     return errors
 
 
@@ -170,8 +194,7 @@ def validate_chain_document(document: Any) -> list[str]:
         return errors
 
     contract = selection.get("action_contract")
-    contract_errors = selection_validator.validate_action_contract(contract)
-    errors.extend(contract_errors)
+    errors.extend(selection_validator.validate_action_contract(contract))
     if not isinstance(contract, dict):
         errors.append("selection action_contract is required for execution")
         return errors
@@ -182,13 +205,16 @@ def validate_chain_document(document: Any) -> list[str]:
         errors.append("execution question_id must match selection question_id")
     if execution.get("selected_option") != selection.get("selected_option"):
         errors.append("execution selected_option must match selection selected_option")
-
     if execution.get("action_type") != contract.get("action_type"):
         errors.append("execution action_type must match selection action_contract")
     if execution.get("action_target") != contract.get("action_target"):
         errors.append("execution action_target must match selection action_contract")
-    if execution.get("action_parameters") != contract.get("parameters"):
-        errors.append("execution action_parameters must exactly match selection action_contract")
+    if not json_values_exactly_equal(
+        execution.get("action_parameters"), contract.get("parameters")
+    ):
+        errors.append(
+            "execution action_parameters must exactly match selection action_contract"
+        )
 
     selected_at = parse_rfc3339(selection.get("selected_at"))
     started_at = parse_rfc3339(execution.get("started_at"))
@@ -203,7 +229,6 @@ def validate_chain_document(document: Any) -> list[str]:
         and selection_session != execution_session
     ):
         errors.append("execution and selection session_id values must match")
-
     return errors
 
 
@@ -252,7 +277,6 @@ def main(argv: list[str] | None = None) -> int:
         for error in expansion_errors
     ]
     failed = bool(expansion_errors)
-
     for path in paths:
         errors = validate_path(path)
         failed = failed or bool(errors)
