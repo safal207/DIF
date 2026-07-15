@@ -1,0 +1,26 @@
+{
+  "authorization": {
+    "schema_version": "0.1",
+    "response_id": "hr-123",
+    "question_id": "q-123",
+    "response_state": "DELEGATED_TO_AGENT",
+    "selected_option": null,
+    "decision_source": "HUMAN",
+    "human_interaction_observed": true,
+    "human_confirmed": true,
+    "agent_authority": "CHOOSE",
+    "observed_at": "2026-07-15T20:00:00Z",
+    "session_id": "session-1"
+  },
+  "selection": {
+    "schema_version": "0.1",
+    "selection_id": "as-456",
+    "question_id": "q-123",
+    "selected_option": "option-b",
+    "decision_source": "AGENT",
+    "authorization_response_id": "hr-123",
+    "selected_at": "2026-07-15T20:00:01Z",
+    "session_id": "session-1",
+    "rationale": "Option B best satisfies the stated constraints."
+  }
+}
