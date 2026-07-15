@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1",
+  "question_id": "q-offset-time",
+  "response_state": "TIMED_OUT",
+  "selected_option": null,
+  "decision_source": "SYSTEM",
+  "human_interaction_observed": false,
+  "human_confirmed": false,
+  "agent_authority": "STOP_AND_WAIT",
+  "observed_at": "2026-07-15T23:00:00+03:00"
+}
