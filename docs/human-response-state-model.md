@@ -1,6 +1,6 @@
 # Human Response State Model v0.1
 
-Implementation patch: **v0.1.1**
+Implementation patch: **v0.1.2**
 
 This model preserves the difference between a human decision and a system event
 that merely ended a question.
@@ -32,6 +32,7 @@ explicitly delegates that choice.
 ```json
 {
   "schema_version": "0.1",
+  "response_id": "hr-123",
   "question_id": "q-123",
   "response_state": "TIMED_OUT",
   "selected_option": null,
@@ -42,6 +43,10 @@ explicitly delegates that choice.
   "observed_at": "2026-07-15T20:00:00Z"
 }
 ```
+
+`response_id` is optional for standalone response records. It becomes required
+when another record, such as an Agent Selection Receipt, needs to reference the
+human response precisely.
 
 `observed_at` accepts timezone-aware RFC3339 values using either `Z` or an
 explicit offset, for example `2026-07-15T23:00:00+03:00`. Timestamps without a
@@ -57,19 +62,23 @@ masquerade as the human response receipt:
 
 ```text
 HumanResponseReceipt
+  response_id = hr-123
   response_state = DELEGATED_TO_AGENT
   decision_source = HUMAN
   selected_option = null
         ↓ authorizes
-AgentSelectionReceipt (future companion record)
+AgentSelectionReceipt
   decision_source = AGENT
   selected_option = option-b
-  authorized_by = <human response receipt id>
+  authorization_response_id = hr-123
 ```
 
+The companion contract and pair validator are documented in
+[`agent-selection-receipt.md`](agent-selection-receipt.md).
+
 The Human Response Receipt schema intentionally excludes `AGENT` from
-`decision_source`. A future Agent Selection Receipt will preserve the agent's
-choice and link it to the explicit human delegation that authorized it.
+`decision_source`. Agent provenance belongs in the linked Agent Selection
+Receipt.
 
 ## Validation
 

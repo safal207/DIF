@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/agent-selection-receipt.schema.json",
+  "title": "DIF Agent Selection Receipt",
+  "description": "Records an option selected by an agent under authority granted by a separate Human Response Receipt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "selection_id",
+    "question_id",
+    "selected_option",
+    "decision_source",
+    "authorization_response_id",
+    "selected_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "selection_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "selected_option": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision_source": {
+      "const": "AGENT"
+    },
+    "authorization_response_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "selected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "rationale": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

@@ -20,6 +20,14 @@
     "schema_version": {
       "const": "0.1"
     },
+    "response_id": {
+      "description": "Stable receipt identifier used when another record must reference this human response.",
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
     "question_id": {
       "type": "string",
       "minLength": 1

@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Validate DIF Human Response Receipt semantic invariants.
-
-This validator intentionally uses only the Python standard library so the
-conformance fixtures can run in any basic CI environment.
-"""
+"""Validate DIF Human Response Receipt semantic invariants."""
 
 from __future__ import annotations
 
@@ -94,33 +90,39 @@ REQUIRED_FIELDS = {
     "agent_authority",
     "observed_at",
 }
-
 OPTIONAL_FIELDS = {
+    "response_id",
     "session_id",
     "transport_id",
     "metadata",
 }
-
 ALLOWED_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
 
-def is_rfc3339_timestamp(value: Any) -> bool:
-    """Return True for timezone-aware RFC3339 timestamps.
-
-    Both ``Z`` and explicit UTC offsets such as ``+03:00`` are accepted.
-    Naive timestamps are rejected because provenance records need an
-    unambiguous instant.
-    """
+def parse_rfc3339(value: Any) -> datetime | None:
+    """Parse a timezone-aware RFC3339 value, accepting Z or an offset."""
 
     if not isinstance(value, str) or "T" not in value:
-        return False
-
+        return None
     normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
     try:
         parsed = datetime.fromisoformat(normalized)
     except ValueError:
-        return False
-    return parsed.tzinfo is not None
+        return None
+    return parsed if parsed.tzinfo is not None else None
+
+
+def is_rfc3339_timestamp(value: Any) -> bool:
+    return parse_rfc3339(value) is not None
+
+
+def _validate_optional_id(receipt: dict[str, Any], field: str) -> list[str]:
+    value = receipt.get(field)
+    if value is None:
+        return []
+    if not isinstance(value, str) or not value.strip():
+        return [f"{field} must be null or a non-empty string"]
+    return []
 
 
 def validate_receipt(receipt: Any) -> list[str]:
@@ -130,15 +132,12 @@ def validate_receipt(receipt: Any) -> list[str]:
         return ["receipt must be a JSON object"]
 
     errors: list[str] = []
-
     missing = sorted(REQUIRED_FIELDS - receipt.keys())
+    unexpected = sorted(receipt.keys() - ALLOWED_FIELDS)
     if missing:
         errors.append(f"missing required fields: {', '.join(missing)}")
-
-    unexpected = sorted(receipt.keys() - ALLOWED_FIELDS)
     if unexpected:
         errors.append(f"unexpected fields: {', '.join(unexpected)}")
-
     if missing:
         return errors
 
@@ -148,8 +147,9 @@ def validate_receipt(receipt: Any) -> list[str]:
             f"got {receipt['schema_version']!r}"
         )
 
-    question_id = receipt["question_id"]
-    if not isinstance(question_id, str) or not question_id.strip():
+    if not isinstance(receipt["question_id"], str) or not receipt[
+        "question_id"
+    ].strip():
         errors.append("question_id must be a non-empty string")
 
     if not is_rfc3339_timestamp(receipt["observed_at"]):
@@ -158,12 +158,8 @@ def validate_receipt(receipt: Any) -> list[str]:
             "using Z or an explicit UTC offset"
         )
 
-    for optional_id in ("session_id", "transport_id"):
-        value = receipt.get(optional_id)
-        if value is not None and (
-            not isinstance(value, str) or not value.strip()
-        ):
-            errors.append(f"{optional_id} must be null or a non-empty string")
+    for field in ("response_id", "session_id", "transport_id"):
+        errors.extend(_validate_optional_id(receipt, field))
 
     metadata = receipt.get("metadata")
     if metadata is not None and not isinstance(metadata, dict):
@@ -180,16 +176,13 @@ def validate_receipt(receipt: Any) -> list[str]:
             f"{state} requires decision_source={rule['source']}, "
             f"got {receipt['decision_source']!r}"
         )
-
     if receipt["human_interaction_observed"] is not rule["interaction"]:
         errors.append(
             f"{state} requires human_interaction_observed="
             f"{rule['interaction']}"
         )
-
     if receipt["human_confirmed"] is not rule["confirmed"]:
         errors.append(f"{state} requires human_confirmed={rule['confirmed']}")
-
     if receipt["agent_authority"] != rule["authority"]:
         errors.append(
             f"{state} requires agent_authority={rule['authority']}, "
@@ -210,7 +203,6 @@ def validate_receipt(receipt: Any) -> list[str]:
         errors.append(
             "unconfirmed human response cannot grant CONTINUE or CHOOSE authority"
         )
-
     if receipt["decision_source"] in {"SYSTEM", "TRANSPORT"} and receipt[
         "human_confirmed"
     ]:
@@ -235,7 +227,6 @@ def expand_path_args(path_args: list[str]) -> tuple[list[Path], list[str]]:
     expanded: list[Path] = []
     errors: list[str] = []
     seen: set[Path] = set()
-
     for raw_path in path_args:
         if glob.has_magic(raw_path):
             matches = sorted(Path(match) for match in glob.glob(raw_path))
@@ -244,12 +235,10 @@ def expand_path_args(path_args: list[str]) -> tuple[list[Path], list[str]]:
                 continue
         else:
             matches = [Path(raw_path)]
-
         for path in matches:
             if path not in seen:
                 seen.add(path)
                 expanded.append(path)
-
     return expanded, errors
 
 
@@ -294,7 +283,6 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{result['status']}: {result['path']}")
             for error in result["errors"]:
                 print(f"  - {error}")
-
     return 1 if failed else 0
 
 
