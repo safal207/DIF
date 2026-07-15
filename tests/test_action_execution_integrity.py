@@ -35,7 +35,7 @@ class ActionExecutionIntegrityTests(unittest.TestCase):
         fixtures = sorted(
             (ROOT / "fixtures" / "action-execution" / "invalid").glob("*.json")
         )
-        self.assertGreaterEqual(len(fixtures), 6)
+        self.assertGreaterEqual(len(fixtures), 7)
         for fixture in fixtures:
             with self.subTest(fixture=fixture.name):
                 self.assertTrue(
@@ -90,6 +90,21 @@ class ActionExecutionIntegrityTests(unittest.TestCase):
         self.assertTrue(
             any("action_parameters must exactly match" in error for error in errors)
         )
+
+    def test_json_parameter_types_must_match_exactly(self) -> None:
+        chain = self.load(
+            ROOT
+            / "fixtures"
+            / "action-execution"
+            / "invalid"
+            / "boolean-number-parameter-mismatch.json"
+        )
+        errors = validator.validate_chain_document(chain)
+        self.assertTrue(
+            any("action_parameters must exactly match" in error for error in errors)
+        )
+        self.assertFalse(validator.json_values_exactly_equal({"enabled": True}, {"enabled": 1}))
+        self.assertFalse(validator.json_values_exactly_equal({"count": 1}, {"count": 1.0}))
 
     def test_execution_requires_predeclared_action_contract(self) -> None:
         chain = self.load(
