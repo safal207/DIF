@@ -37,14 +37,29 @@ AgentSelectionReceipt
   "schema_version": "0.1",
   "selection_id": "as-456",
   "question_id": "q-123",
-  "selected_option": "option-b",
+  "selected_option": "send-follow-up",
   "decision_source": "AGENT",
   "authorization_response_id": "hr-123",
   "selected_at": "2026-07-15T20:00:01Z",
+  "action_contract": {
+    "action_type": "send_email",
+    "action_target": "customer-123",
+    "parameters": {
+      "template": "follow-up"
+    }
+  },
   "session_id": "session-1",
-  "rationale": "Option B best satisfies the stated constraints."
+  "rationale": "The follow-up option best satisfies the stated constraints."
 }
 ```
+
+`action_contract` is optional when the selection does not lead to an external
+action. It becomes required when an Action Execution Receipt follows. This
+prevents an agent from choosing one option and later executing a different
+action, target, or parameter set.
+
+The execution layer is documented in
+[`action-execution-receipt.md`](action-execution-receipt.md).
 
 ## Pair validation
 
@@ -75,7 +90,8 @@ The validator checks:
 7. the selection occurs at or after authorization;
 8. session identifiers match when both are present;
 9. the human receipt keeps `selected_option: null`;
-10. the selection records `decision_source: AGENT`.
+10. the selection records `decision_source: AGENT`;
+11. an optional action contract has a closed, valid shape.
 
 ## Fail-closed cases
 
