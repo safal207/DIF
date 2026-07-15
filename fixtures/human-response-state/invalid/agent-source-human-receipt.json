@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1",
+  "question_id": "q-agent-selection",
+  "response_state": "DELEGATED_TO_AGENT",
+  "selected_option": "option-b",
+  "decision_source": "AGENT",
+  "human_interaction_observed": true,
+  "human_confirmed": true,
+  "agent_authority": "CHOOSE",
+  "observed_at": "2026-07-15T20:00:00Z"
+}

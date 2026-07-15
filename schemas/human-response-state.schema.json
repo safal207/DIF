@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/safal207/DIF/schemas/human-response-state.schema.json",
   "title": "DIF Human Response Receipt",
-  "description": "A provenance-preserving receipt for structured human questions. Semantic state/authority invariants are enforced by tools/validate_human_response.py.",
+  "description": "A provenance-preserving receipt for structured human questions. It records how the human question ended; a later agent-made selection belongs in a separate Agent Selection Receipt.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -46,10 +46,10 @@
       "minLength": 1
     },
     "decision_source": {
+      "description": "Source that ended or authorized the human question. AGENT is intentionally excluded because an agent selection is a later, separate event.",
       "type": "string",
       "enum": [
         "HUMAN",
-        "AGENT",
         "SYSTEM",
         "TRANSPORT"
       ]

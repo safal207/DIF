@@ -1,5 +1,7 @@
 # Human Response State Model v0.1
 
+Implementation patch: **v0.1.1**
+
 This model preserves the difference between a human decision and a system event
 that merely ended a question.
 
@@ -41,6 +43,34 @@ explicitly delegates that choice.
 }
 ```
 
+`observed_at` accepts timezone-aware RFC3339 values using either `Z` or an
+explicit offset, for example `2026-07-15T23:00:00+03:00`. Timestamps without a
+timezone are rejected.
+
+## Delegation and later agent selection
+
+`DELEGATED_TO_AGENT` records the human act of granting authority. Therefore its
+`decision_source` is `HUMAN` and its `selected_option` remains `null`.
+
+A later option chosen by the agent is a separate event and must not overwrite or
+masquerade as the human response receipt:
+
+```text
+HumanResponseReceipt
+  response_state = DELEGATED_TO_AGENT
+  decision_source = HUMAN
+  selected_option = null
+        ↓ authorizes
+AgentSelectionReceipt (future companion record)
+  decision_source = AGENT
+  selected_option = option-b
+  authorized_by = <human response receipt id>
+```
+
+The Human Response Receipt schema intentionally excludes `AGENT` from
+`decision_source`. A future Agent Selection Receipt will preserve the agent's
+choice and link it to the explicit human delegation that authorized it.
+
 ## Validation
 
 Validate a receipt:
@@ -54,8 +84,11 @@ Validate all known-good fixtures:
 
 ```bash
 python3 tools/validate_human_response.py \
-  fixtures/human-response-state/valid/*.json
+  "fixtures/human-response-state/valid/*.json"
 ```
+
+The CLI expands glob patterns itself, so the quoted form works consistently in
+Linux, macOS, and Windows shells. An unmatched pattern produces a clear error.
 
 Run the regression suite:
 
@@ -63,9 +96,10 @@ Run the regression suite:
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-The JSON Schema checks the portable record shape. The reference validator also
-checks semantic invariants that JSON Schema alone would make difficult to read
-and maintain.
+The JSON Schema checks the portable record shape. The dependency-free reference
+validator mirrors the schema's closed field set and also checks semantic
+invariants that JSON Schema alone would make difficult to read and maintain.
+Unknown fields are rejected rather than silently accepted.
 
 ## External validation targets
 

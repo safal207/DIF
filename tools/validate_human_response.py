@@ -8,16 +8,14 @@ conformance fixtures can run in any basic CI environment.
 from __future__ import annotations
 
 import argparse
+import glob
 import json
-import re
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = "0.1"
-ISO_8601_UTC = re.compile(
-    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$"
-)
 
 STATE_RULES: dict[str, dict[str, Any]] = {
     "PENDING": {
@@ -97,6 +95,33 @@ REQUIRED_FIELDS = {
     "observed_at",
 }
 
+OPTIONAL_FIELDS = {
+    "session_id",
+    "transport_id",
+    "metadata",
+}
+
+ALLOWED_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
+
+
+def is_rfc3339_timestamp(value: Any) -> bool:
+    """Return True for timezone-aware RFC3339 timestamps.
+
+    Both ``Z`` and explicit UTC offsets such as ``+03:00`` are accepted.
+    Naive timestamps are rejected because provenance records need an
+    unambiguous instant.
+    """
+
+    if not isinstance(value, str) or "T" not in value:
+        return False
+
+    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError:
+        return False
+    return parsed.tzinfo is not None
+
 
 def validate_receipt(receipt: Any) -> list[str]:
     """Return semantic validation errors for one receipt."""
@@ -109,6 +134,12 @@ def validate_receipt(receipt: Any) -> list[str]:
     missing = sorted(REQUIRED_FIELDS - receipt.keys())
     if missing:
         errors.append(f"missing required fields: {', '.join(missing)}")
+
+    unexpected = sorted(receipt.keys() - ALLOWED_FIELDS)
+    if unexpected:
+        errors.append(f"unexpected fields: {', '.join(unexpected)}")
+
+    if missing:
         return errors
 
     if receipt["schema_version"] != SCHEMA_VERSION:
@@ -121,9 +152,22 @@ def validate_receipt(receipt: Any) -> list[str]:
     if not isinstance(question_id, str) or not question_id.strip():
         errors.append("question_id must be a non-empty string")
 
-    observed_at = receipt["observed_at"]
-    if not isinstance(observed_at, str) or not ISO_8601_UTC.match(observed_at):
-        errors.append("observed_at must be an ISO-8601 UTC timestamp ending in Z")
+    if not is_rfc3339_timestamp(receipt["observed_at"]):
+        errors.append(
+            "observed_at must be a timezone-aware RFC3339 timestamp "
+            "using Z or an explicit UTC offset"
+        )
+
+    for optional_id in ("session_id", "transport_id"):
+        value = receipt.get(optional_id)
+        if value is not None and (
+            not isinstance(value, str) or not value.strip()
+        ):
+            errors.append(f"{optional_id} must be null or a non-empty string")
+
+    metadata = receipt.get("metadata")
+    if metadata is not None and not isinstance(metadata, dict):
+        errors.append("metadata must be an object when provided")
 
     state = receipt["response_state"]
     rule = STATE_RULES.get(state)
@@ -185,11 +229,35 @@ def validate_path(path: Path) -> list[str]:
     return validate_receipt(receipt)
 
 
+def expand_path_args(path_args: list[str]) -> tuple[list[Path], list[str]]:
+    """Expand CLI glob arguments consistently across operating systems."""
+
+    expanded: list[Path] = []
+    errors: list[str] = []
+    seen: set[Path] = set()
+
+    for raw_path in path_args:
+        if glob.has_magic(raw_path):
+            matches = sorted(Path(match) for match in glob.glob(raw_path))
+            if not matches:
+                errors.append(f"no files matched pattern: {raw_path}")
+                continue
+        else:
+            matches = [Path(raw_path)]
+
+        for path in matches:
+            if path not in seen:
+                seen.add(path)
+                expanded.append(path)
+
+    return expanded, errors
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Validate DIF Human Response Receipt files."
     )
-    parser.add_argument("paths", nargs="+", type=Path)
+    parser.add_argument("paths", nargs="+")
     parser.add_argument(
         "--json",
         action="store_true",
@@ -197,9 +265,18 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    results = []
-    failed = False
-    for path in args.paths:
+    paths, expansion_errors = expand_path_args(args.paths)
+    results = [
+        {
+            "path": error.removeprefix("no files matched pattern: "),
+            "status": "INVALID",
+            "errors": [error],
+        }
+        for error in expansion_errors
+    ]
+    failed = bool(expansion_errors)
+
+    for path in paths:
         errors = validate_path(path)
         failed = failed or bool(errors)
         results.append(
