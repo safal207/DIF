@@ -1,0 +1,55 @@
+name: Human Response Integrity
+
+on:
+  pull_request:
+    paths:
+      - "schemas/human-response-state.schema.json"
+      - "docs/human-response-state-model.md"
+      - "fixtures/human-response-state/**"
+      - "tools/validate_human_response.py"
+      - "tests/test_human_response_integrity.py"
+      - ".github/workflows/human-response-integrity.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "schemas/human-response-state.schema.json"
+      - "docs/human-response-state-model.md"
+      - "fixtures/human-response-state/**"
+      - "tools/validate_human_response.py"
+      - "tests/test_human_response_integrity.py"
+      - ".github/workflows/human-response-integrity.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run semantic regression tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Validate accepted fixtures
+        run: >-
+          python tools/validate_human_response.py
+          fixtures/human-response-state/valid/*.json
+
+      - name: Confirm rejected fixtures fail closed
+        shell: bash
+        run: |
+          for fixture in fixtures/human-response-state/invalid/*.json; do
+            if python tools/validate_human_response.py "$fixture"; then
+              echo "Expected invalid fixture to fail: $fixture"
+              exit 1
+            fi
+          done
