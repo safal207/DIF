@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/action-execution-receipt.schema.json",
+  "title": "DIF Action Execution Receipt",
+  "description": "Records an attempted action executed from a previously authorized Agent Selection Receipt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "execution_id",
+    "question_id",
+    "selection_id",
+    "selected_option",
+    "action_type",
+    "action_target",
+    "action_parameters",
+    "initiated_by",
+    "executed_by",
+    "execution_status",
+    "started_at",
+    "completed_at",
+    "error"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "execution_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "selection_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "selected_option": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action_target": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action_parameters": {
+      "type": "object"
+    },
+    "initiated_by": {
+      "const": "AGENT"
+    },
+    "executed_by": {
+      "type": "string",
+      "enum": [
+        "AGENT",
+        "TOOL",
+        "SYSTEM"
+      ]
+    },
+    "execution_status": {
+      "type": "string",
+      "enum": [
+        "SUCCEEDED",
+        "FAILED"
+      ]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "idempotency_key": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "result": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

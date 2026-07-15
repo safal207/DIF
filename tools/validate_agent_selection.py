@@ -34,8 +34,14 @@ SELECTION_REQUIRED_FIELDS = {
     "authorization_response_id",
     "selected_at",
 }
-SELECTION_OPTIONAL_FIELDS = {"session_id", "rationale", "metadata"}
+SELECTION_OPTIONAL_FIELDS = {
+    "action_contract",
+    "session_id",
+    "rationale",
+    "metadata",
+}
 SELECTION_ALLOWED_FIELDS = SELECTION_REQUIRED_FIELDS | SELECTION_OPTIONAL_FIELDS
+ACTION_CONTRACT_FIELDS = {"action_type", "action_target", "parameters"}
 
 
 def parse_rfc3339(value: Any) -> datetime | None:
@@ -51,6 +57,38 @@ def parse_rfc3339(value: Any) -> datetime | None:
 
 def _non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
+
+
+def validate_action_contract(contract: Any) -> list[str]:
+    """Validate an optional selected action contract."""
+
+    if contract is None:
+        return []
+    if not isinstance(contract, dict):
+        return ["selection action_contract must be null or an object"]
+
+    errors: list[str] = []
+    missing = sorted(ACTION_CONTRACT_FIELDS - contract.keys())
+    unexpected = sorted(contract.keys() - ACTION_CONTRACT_FIELDS)
+    if missing:
+        errors.append(
+            f"selection action_contract missing fields: {', '.join(missing)}"
+        )
+    if unexpected:
+        errors.append(
+            f"selection action_contract has unexpected fields: {', '.join(unexpected)}"
+        )
+    if missing:
+        return errors
+
+    for field in ("action_type", "action_target"):
+        if not _non_empty_string(contract[field]):
+            errors.append(
+                f"selection action_contract {field} must be a non-empty string"
+            )
+    if not isinstance(contract["parameters"], dict):
+        errors.append("selection action_contract parameters must be an object")
+    return errors
 
 
 def validate_selection_receipt(receipt: Any) -> list[str]:
@@ -92,6 +130,8 @@ def validate_selection_receipt(receipt: Any) -> list[str]:
             "selection selected_at must be a timezone-aware RFC3339 timestamp"
         )
 
+    errors.extend(validate_action_contract(receipt.get("action_contract")))
+
     for field in ("session_id", "rationale"):
         value = receipt.get(field)
         if value is not None and not _non_empty_string(value):
@@ -125,8 +165,7 @@ def validate_pair_document(document: Any) -> list[str]:
 
     authorization_errors = human_validator.validate_receipt(authorization)
     errors.extend(f"authorization: {error}" for error in authorization_errors)
-    selection_errors = validate_selection_receipt(selection)
-    errors.extend(selection_errors)
+    errors.extend(validate_selection_receipt(selection))
 
     if not isinstance(authorization, dict) or not isinstance(selection, dict):
         return errors
@@ -143,11 +182,8 @@ def validate_pair_document(document: Any) -> list[str]:
 
     if selection.get("question_id") != authorization.get("question_id"):
         errors.append("selection and authorization question_id values must match")
-
     if authorization.get("response_state") != "DELEGATED_TO_AGENT":
-        errors.append(
-            "authorization response_state must be DELEGATED_TO_AGENT"
-        )
+        errors.append("authorization response_state must be DELEGATED_TO_AGENT")
     if authorization.get("decision_source") != "HUMAN":
         errors.append("authorization decision_source must be HUMAN")
     if authorization.get("human_confirmed") is not True:

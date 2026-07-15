@@ -41,6 +41,32 @@
       "type": "string",
       "format": "date-time"
     },
+    "action_contract": {
+      "description": "Exact action the selected option authorizes. Required when an Action Execution Receipt will follow.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "action_type",
+        "action_target",
+        "parameters"
+      ],
+      "properties": {
+        "action_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action_target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parameters": {
+          "type": "object"
+        }
+      }
+    },
     "session_id": {
       "type": [
         "string",
