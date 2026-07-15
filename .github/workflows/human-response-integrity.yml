@@ -1,23 +1,33 @@
-name: Human Response Integrity
+name: Human and Agent Decision Integrity
 
 on:
   pull_request:
     paths:
       - "schemas/human-response-state.schema.json"
+      - "schemas/agent-selection-receipt.schema.json"
       - "docs/human-response-state-model.md"
+      - "docs/agent-selection-receipt.md"
       - "fixtures/human-response-state/**"
+      - "fixtures/agent-selection/**"
       - "tools/validate_human_response.py"
+      - "tools/validate_agent_selection.py"
       - "tests/test_human_response_integrity.py"
+      - "tests/test_agent_selection_integrity.py"
       - ".github/workflows/human-response-integrity.yml"
   push:
     branches:
       - main
     paths:
       - "schemas/human-response-state.schema.json"
+      - "schemas/agent-selection-receipt.schema.json"
       - "docs/human-response-state-model.md"
+      - "docs/agent-selection-receipt.md"
       - "fixtures/human-response-state/**"
+      - "fixtures/agent-selection/**"
       - "tools/validate_human_response.py"
+      - "tools/validate_agent_selection.py"
       - "tests/test_human_response_integrity.py"
+      - "tests/test_agent_selection_integrity.py"
       - ".github/workflows/human-response-integrity.yml"
 
 permissions:
@@ -39,17 +49,32 @@ jobs:
       - name: Run semantic regression tests
         run: python -m unittest discover -s tests -p 'test_*.py'
 
-      - name: Validate accepted fixtures
+      - name: Validate accepted human response fixtures
         run: >-
           python tools/validate_human_response.py
           fixtures/human-response-state/valid/*.json
 
-      - name: Confirm rejected fixtures fail closed
+      - name: Confirm rejected human response fixtures fail closed
         shell: bash
         run: |
           for fixture in fixtures/human-response-state/invalid/*.json; do
             if python tools/validate_human_response.py "$fixture"; then
-              echo "Expected invalid fixture to fail: $fixture"
+              echo "Expected invalid human response fixture to fail: $fixture"
+              exit 1
+            fi
+          done
+
+      - name: Validate accepted agent selection pairs
+        run: >-
+          python tools/validate_agent_selection.py
+          fixtures/agent-selection/valid/*.json
+
+      - name: Confirm rejected agent selection pairs fail closed
+        shell: bash
+        run: |
+          for fixture in fixtures/agent-selection/invalid/*.json; do
+            if python tools/validate_agent_selection.py "$fixture"; then
+              echo "Expected invalid agent selection pair to fail: $fixture"
               exit 1
             fi
           done
