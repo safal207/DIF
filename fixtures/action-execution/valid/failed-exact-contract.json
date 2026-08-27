@@ -1,0 +1,48 @@
+{
+  "authorization": {
+    "schema_version": "0.1",
+    "response_id": "hr-ex-2",
+    "question_id": "q-ex-2",
+    "response_state": "DELEGATED_TO_AGENT",
+    "selected_option": null,
+    "decision_source": "HUMAN",
+    "human_interaction_observed": true,
+    "human_confirmed": true,
+    "agent_authority": "CHOOSE",
+    "observed_at": "2026-07-15T20:10:00Z"
+  },
+  "selection": {
+    "schema_version": "0.1",
+    "selection_id": "as-ex-2",
+    "question_id": "q-ex-2",
+    "selected_option": "send-follow-up",
+    "decision_source": "AGENT",
+    "authorization_response_id": "hr-ex-2",
+    "selected_at": "2026-07-15T20:10:01Z",
+    "action_contract": {
+      "action_type": "send_email",
+      "action_target": "customer-456",
+      "parameters": {
+        "template": "follow-up"
+      }
+    }
+  },
+  "execution": {
+    "schema_version": "0.1",
+    "execution_id": "ex-2",
+    "question_id": "q-ex-2",
+    "selection_id": "as-ex-2",
+    "selected_option": "send-follow-up",
+    "action_type": "send_email",
+    "action_target": "customer-456",
+    "action_parameters": {
+      "template": "follow-up"
+    },
+    "initiated_by": "AGENT",
+    "executed_by": "TOOL",
+    "execution_status": "FAILED",
+    "started_at": "2026-07-15T20:10:02Z",
+    "completed_at": "2026-07-15T20:10:05Z",
+    "error": "SMTP timeout"
+  }
+}

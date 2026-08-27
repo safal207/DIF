@@ -1,0 +1,39 @@
+{
+  "authorization": {
+    "schema_version": "0.1",
+    "response_id": "hr-no-contract",
+    "question_id": "q-no-contract",
+    "response_state": "DELEGATED_TO_AGENT",
+    "selected_option": null,
+    "decision_source": "HUMAN",
+    "human_interaction_observed": true,
+    "human_confirmed": true,
+    "agent_authority": "CHOOSE",
+    "observed_at": "2026-07-15T20:00:00Z"
+  },
+  "selection": {
+    "schema_version": "0.1",
+    "selection_id": "as-no-contract",
+    "question_id": "q-no-contract",
+    "selected_option": "send-follow-up",
+    "decision_source": "AGENT",
+    "authorization_response_id": "hr-no-contract",
+    "selected_at": "2026-07-15T20:00:01Z"
+  },
+  "execution": {
+    "schema_version": "0.1",
+    "execution_id": "ex-no-contract",
+    "question_id": "q-no-contract",
+    "selection_id": "as-no-contract",
+    "selected_option": "send-follow-up",
+    "action_type": "send_email",
+    "action_target": "customer-123",
+    "action_parameters": {"template": "follow-up"},
+    "initiated_by": "AGENT",
+    "executed_by": "TOOL",
+    "execution_status": "SUCCEEDED",
+    "started_at": "2026-07-15T20:00:02Z",
+    "completed_at": "2026-07-15T20:00:03Z",
+    "error": null
+  }
+}

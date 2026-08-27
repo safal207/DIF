@@ -1,0 +1,23 @@
+{
+  "authorization": {
+    "schema_version": "0.1",
+    "response_id": "hr-time-order",
+    "question_id": "q-123",
+    "response_state": "DELEGATED_TO_AGENT",
+    "selected_option": null,
+    "decision_source": "HUMAN",
+    "human_interaction_observed": true,
+    "human_confirmed": true,
+    "agent_authority": "CHOOSE",
+    "observed_at": "2026-07-15T20:00:10Z"
+  },
+  "selection": {
+    "schema_version": "0.1",
+    "selection_id": "as-time-order",
+    "question_id": "q-123",
+    "selected_option": "option-b",
+    "decision_source": "AGENT",
+    "authorization_response_id": "hr-time-order",
+    "selected_at": "2026-07-15T20:00:09Z"
+  }
+}

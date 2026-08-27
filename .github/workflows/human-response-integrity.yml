@@ -1,0 +1,105 @@
+name: Human, Selection, and Execution Integrity
+
+on:
+  pull_request:
+    paths:
+      - "schemas/human-response-state.schema.json"
+      - "schemas/agent-selection-receipt.schema.json"
+      - "schemas/action-execution-receipt.schema.json"
+      - "docs/human-response-state-model.md"
+      - "docs/agent-selection-receipt.md"
+      - "docs/action-execution-receipt.md"
+      - "fixtures/human-response-state/**"
+      - "fixtures/agent-selection/**"
+      - "fixtures/action-execution/**"
+      - "tools/validate_human_response.py"
+      - "tools/validate_agent_selection.py"
+      - "tools/validate_action_execution.py"
+      - "tests/test_human_response_integrity.py"
+      - "tests/test_agent_selection_integrity.py"
+      - "tests/test_action_execution_integrity.py"
+      - ".github/workflows/human-response-integrity.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "schemas/human-response-state.schema.json"
+      - "schemas/agent-selection-receipt.schema.json"
+      - "schemas/action-execution-receipt.schema.json"
+      - "docs/human-response-state-model.md"
+      - "docs/agent-selection-receipt.md"
+      - "docs/action-execution-receipt.md"
+      - "fixtures/human-response-state/**"
+      - "fixtures/agent-selection/**"
+      - "fixtures/action-execution/**"
+      - "tools/validate_human_response.py"
+      - "tools/validate_agent_selection.py"
+      - "tools/validate_action_execution.py"
+      - "tests/test_human_response_integrity.py"
+      - "tests/test_agent_selection_integrity.py"
+      - "tests/test_action_execution_integrity.py"
+      - ".github/workflows/human-response-integrity.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run semantic regression tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Validate accepted human response fixtures
+        run: >-
+          python tools/validate_human_response.py
+          fixtures/human-response-state/valid/*.json
+
+      - name: Confirm rejected human response fixtures fail closed
+        shell: bash
+        run: |
+          for fixture in fixtures/human-response-state/invalid/*.json; do
+            if python tools/validate_human_response.py "$fixture"; then
+              echo "Expected invalid human response fixture to fail: $fixture"
+              exit 1
+            fi
+          done
+
+      - name: Validate accepted agent selection pairs
+        run: >-
+          python tools/validate_agent_selection.py
+          fixtures/agent-selection/valid/*.json
+
+      - name: Confirm rejected agent selection pairs fail closed
+        shell: bash
+        run: |
+          for fixture in fixtures/agent-selection/invalid/*.json; do
+            if python tools/validate_agent_selection.py "$fixture"; then
+              echo "Expected invalid agent selection pair to fail: $fixture"
+              exit 1
+            fi
+          done
+
+      - name: Validate accepted action execution chains
+        run: >-
+          python tools/validate_action_execution.py
+          fixtures/action-execution/valid/*.json
+
+      - name: Confirm rejected action execution chains fail closed
+        shell: bash
+        run: |
+          for fixture in fixtures/action-execution/invalid/*.json; do
+            if python tools/validate_action_execution.py "$fixture"; then
+              echo "Expected invalid action execution chain to fail: $fixture"
+              exit 1
+            fi
+          done

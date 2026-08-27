@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1",
+  "question_id": "q-skipped",
+  "response_state": "DECLINED_OPTIONS",
+  "selected_option": null,
+  "decision_source": "HUMAN",
+  "human_interaction_observed": true,
+  "human_confirmed": false,
+  "agent_authority": "ASK_FOLLOWUP",
+  "observed_at": "2026-07-15T20:00:00Z"
+}

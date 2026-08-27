@@ -336,7 +336,12 @@
     const domainRules = [
       {
         name: 'performance',
-        words: ['slow', 'delay', 'lag', 'freeze', 'freezes', 'loading'],
+        words: [
+          'slow', 'slower', 'slowed', 'slowing', 'slowdown', 'slowdowns',
+          'delay', 'delayed', 'delays', 'delaying',
+          'lag', 'lags', 'lagged', 'lagging',
+          'freeze', 'freezes', 'freezing', 'froze', 'frozen', 'loading'
+        ],
         signal: 'The report may concern performance or responsiveness.',
         questions: [
           'Which page, screen, or user flow is affected?',
@@ -350,7 +355,13 @@
       },
       {
         name: 'reliability',
-        words: ['broken', 'error', 'fail', 'fails', 'not work', 'does not work', 'stopped'],
+        words: [
+          'broken', 'breaks', 'broke',
+          'error', 'errors',
+          'fail', 'fails', 'failed', 'failing', 'failure', 'failures',
+          'not work', 'does not work', 'did not work',
+          'stop', 'stops', 'stopped', 'stopping'
+        ],
         signal: 'The report may concern incorrect or unavailable behavior.',
         questions: [
           'What exact action produces the problem?',
@@ -407,10 +418,20 @@
       return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    function matchesKeyword(text, keyword) {
+    const unicodePropertyEscapesSupported = (() => {
+      try {
+        new RegExp('\\p{L}', 'u');
+        return true;
+      } catch {
+        return false;
+      }
+    })();
+
+    function matchesKeyword(text, keyword, useUnicode = unicodePropertyEscapesSupported) {
       const phrasePattern = escapeRegExp(keyword).replace(/\s+/g, '\\s+');
-      const boundaryPattern = `(^|[^\\p{L}\\p{N}_])${phrasePattern}(?=$|[^\\p{L}\\p{N}_])`;
-      return new RegExp(boundaryPattern, 'iu').test(text);
+      const wordCharacters = useUnicode ? '\\p{L}\\p{N}_' : 'A-Za-z0-9_';
+      const boundaryPattern = `(^|[^${wordCharacters}])${phrasePattern}(?=$|[^${wordCharacters}])`;
+      return new RegExp(boundaryPattern, useUnicode ? 'iu' : 'i').test(text);
     }
 
     function renderList(selector, items) {

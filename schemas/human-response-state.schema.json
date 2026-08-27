@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/safal207/DIF/schemas/human-response-state.schema.json",
+  "title": "DIF Human Response Receipt",
+  "description": "A provenance-preserving receipt for structured human questions. It records how the human question ended; a later agent-made selection belongs in a separate Agent Selection Receipt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "question_id",
+    "response_state",
+    "selected_option",
+    "decision_source",
+    "human_interaction_observed",
+    "human_confirmed",
+    "agent_authority",
+    "observed_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "response_id": {
+      "description": "Stable receipt identifier used when another record must reference this human response.",
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "response_state": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "ANSWERED_BY_USER",
+        "DECLINED_OPTIONS",
+        "DEFERRED_BY_USER",
+        "DELEGATED_TO_AGENT",
+        "TIMED_OUT",
+        "DISMISSED",
+        "CONNECTION_LOST",
+        "CANCELLED_BY_SYSTEM"
+      ]
+    },
+    "selected_option": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "decision_source": {
+      "description": "Source that ended or authorized the human question. AGENT is intentionally excluded because an agent selection is a later, separate event.",
+      "type": "string",
+      "enum": [
+        "HUMAN",
+        "SYSTEM",
+        "TRANSPORT"
+      ]
+    },
+    "human_interaction_observed": {
+      "type": "boolean"
+    },
+    "human_confirmed": {
+      "type": "boolean"
+    },
+    "agent_authority": {
+      "type": "string",
+      "enum": [
+        "CONTINUE",
+        "CHOOSE",
+        "ASK_FOLLOWUP",
+        "STOP_AND_WAIT"
+      ]
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "transport_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

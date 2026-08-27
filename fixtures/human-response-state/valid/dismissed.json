@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1",
+  "question_id": "q-dismissed",
+  "response_state": "DISMISSED",
+  "selected_option": null,
+  "decision_source": "HUMAN",
+  "human_interaction_observed": true,
+  "human_confirmed": false,
+  "agent_authority": "STOP_AND_WAIT",
+  "observed_at": "2026-07-15T20:00:00Z"
+}
