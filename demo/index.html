@@ -336,7 +336,12 @@
     const domainRules = [
       {
         name: 'performance',
-        words: ['slow', 'delay', 'lag', 'freeze', 'freezes', 'loading'],
+        words: [
+          'slow', 'slower', 'slowed', 'slowing', 'slowdown', 'slowdowns',
+          'delay', 'delayed', 'delays', 'delaying',
+          'lag', 'lags', 'lagged', 'lagging',
+          'freeze', 'freezes', 'freezing', 'froze', 'frozen', 'loading'
+        ],
         signal: 'The report may concern performance or responsiveness.',
         questions: [
           'Which page, screen, or user flow is affected?',
@@ -350,7 +355,13 @@
       },
       {
         name: 'reliability',
-        words: ['broken', 'error', 'fail', 'fails', 'not work', 'does not work', 'stopped'],
+        words: [
+          'broken', 'breaks', 'broke',
+          'error', 'errors',
+          'fail', 'fails', 'failed', 'failing', 'failure', 'failures',
+          'not work', 'does not work', 'did not work',
+          'stop', 'stops', 'stopped', 'stopping'
+        ],
         signal: 'The report may concern incorrect or unavailable behavior.',
         questions: [
           'What exact action produces the problem?',
@@ -378,8 +389,49 @@
       }
     ];
 
+    const fallbackRule = {
+      name: 'generic',
+      words: [],
+      signal: 'The report is broad and does not yet map to a specific clarification domain.',
+      questions: [
+        'What exact outcome is the person trying to achieve?',
+        'What happened immediately before the reported situation?'
+      ],
+      hypotheses: [
+        'Clarify the scope and desired outcome before selecting a support, investigation, or product path.'
+      ]
+    };
+
+    const genericQuestions = [
+      'Which environment and user segment should be used for the first reproduction attempt?',
+      'What evidence is already available?'
+    ];
+
+    const genericHypothesis =
+      'First clarify scope and impact, then decide whether the next step is support triage, investigation, or product discovery.';
+
     function unique(items) {
       return [...new Set(items)];
+    }
+
+    function escapeRegExp(value) {
+      return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    const unicodePropertyEscapesSupported = (() => {
+      try {
+        new RegExp('\\p{L}', 'u');
+        return true;
+      } catch {
+        return false;
+      }
+    })();
+
+    function matchesKeyword(text, keyword, useUnicode = unicodePropertyEscapesSupported) {
+      const phrasePattern = escapeRegExp(keyword).replace(/\s+/g, '\\s+');
+      const wordCharacters = useUnicode ? '\\p{L}\\p{N}_' : 'A-Za-z0-9_';
+      const boundaryPattern = `(^|[^${wordCharacters}])${phrasePattern}(?=$|[^${wordCharacters}])`;
+      return new RegExp(boundaryPattern, useUnicode ? 'iu' : 'i').test(text);
     }
 
     function renderList(selector, items) {
@@ -395,10 +447,10 @@
     function analyze(text) {
       const normalized = text.toLowerCase();
       const matchedRules = domainRules.filter((rule) =>
-        rule.words.some((word) => normalized.includes(word))
+        rule.words.some((word) => matchesKeyword(normalized, word))
       );
 
-      const activeRules = matchedRules.length ? matchedRules : [domainRules[1]];
+      const activeRules = matchedRules.length ? matchedRules : [fallbackRule];
       const visibleSignals = [
         `A human reported: “${text}”`,
         ...activeRules.map((rule) => rule.signal)
@@ -418,14 +470,13 @@
       ].filter(Boolean));
 
       const questions = unique([
-        ...activeRules.flatMap((rule) => rule.questions),
-        'Which environment and user segment should be used for the first reproduction attempt?',
-        'What evidence is already available?'
+        ...genericQuestions,
+        ...activeRules.flatMap((rule) => rule.questions)
       ]).slice(0, 5);
 
       const hypotheses = unique([
-        ...activeRules.flatMap((rule) => rule.hypotheses),
-        'First clarify scope and impact, then decide whether the next step is support triage, investigation, or product discovery.'
+        genericHypothesis,
+        ...activeRules.flatMap((rule) => rule.hypotheses)
       ]).slice(0, 4);
 
       return { visibleSignals, missingContext, questions, hypotheses };
