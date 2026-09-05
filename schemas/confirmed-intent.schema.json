@@ -17,7 +17,8 @@
       "type": "string"
     },
     "confirmedByHuman": {
-      "type": "boolean"
+      "type": "boolean",
+      "const": true
     },
     "sourceSignalIds": {
       "type": "array",
