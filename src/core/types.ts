@@ -71,7 +71,7 @@ export interface ConfirmedIntent {
   id: string;
   version: number;
   statement: string;
-  confirmedByHuman: boolean;
+  confirmedByHuman: true;
   sourceSignalIds?: string[];
   sourceCorrectionIds?: string[];
   createdAt: string;
